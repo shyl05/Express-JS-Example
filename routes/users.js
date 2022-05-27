@@ -11,10 +11,17 @@ const errorResponse = require('../middlewares/ErrorHandler');
 router.get('/',(req, res, next)=>{
   Users.find(function(error, users){
     if(error){
-      var errorRes = errorResponse('Sorry',error) 
+      let status = res.statusCode=400;
+      var errorRes = errorResponse('Bad Request',status) 
       return res.send(errorRes);
     } 
-    var response = successResponse('Success',res,users);
+    else if(users.length===0){
+      let status = res.statusCode=404;
+      var errorRes = errorResponse('Sorry Empty Users',status) 
+      return res.send(errorRes);
+    }
+    let responseCode = res.statusCode=200;
+    var response = successResponse('Success',responseCode,users);
     res.send(response);
   })
 });
@@ -30,18 +37,61 @@ router.post('/add',(req, res, next)=>{
         user.password = encrypt;
         user.save()
       }).then(()=>{
-        var response = successResponse('User added successfully',res);
+        let responseCode = res.statusCode=200
+        var response = successResponse('User added successfully',responseCode);
         res.send(response);
       }).catch((err)=>{
-        var errorRes = errorResponse('Sorry',err);
+        let status = res.statusCode=400;
+        var errorRes = errorResponse('OOPS! User registration failed',status);
         return res.send(errorRes);
       })
     }); 
   }
   catch (error) {
-    var errorRes = errorResponse('Sorry',error);
+    let status = res.statusCode=500;
+    var errorRes = errorResponse('Internal Error',status);
     return res.send(errorRes);
   }
+});
+
+/* Get Single User By id*/
+
+router.get('/user/:id',(req,res)=>{
+  Users.findById(req.params.id,function(error,user){
+    if(error){
+      let status = res.statusCode=400;
+      var errorRes = errorResponse('Bad Request',status) 
+      return res.send(errorRes);
+    } 
+    else if(user.length===0){
+      let status = res.statusCode=404;
+      var errorRes = errorResponse('Sorry User Not Found',status) 
+      return res.send(errorRes);
+    }
+    let responseCode = res.statusCode=200;
+    var response = successResponse('Success',responseCode,user);
+    res.send(response);
+  })
+})
+
+/* Get Single User By username*/
+
+router.get('/username/:username',(req,res,err)=>{
+  Users.find({userName:req.params.username},function(error,user){
+    if(error){
+      let status = res.statusCode=400;
+      var errorRes = errorResponse('Bad Request',status) 
+      return res.send(errorRes);
+    }
+    else if(user.length===0){
+      let status = res.statusCode=404;
+      var errorRes = errorResponse('Sorry User Not Found',status); 
+      return res.send(errorRes);
+    }
+    let responseCode = res.statusCode=200;
+    var response = successResponse('Success',responseCode,user);
+    res.send(response);
+  })
 })
 
 

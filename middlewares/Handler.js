@@ -1,7 +1,7 @@
-module.exports = function successResponse(msg,res,data){
+module.exports = function successResponse(msg,responseCode,data){
     const message = {
         msg:msg,
-        status:res.statusCode,
+        status:responseCode,
         organization:'WISSEN',
         data : data,
     };

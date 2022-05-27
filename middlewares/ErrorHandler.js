@@ -1,7 +1,7 @@
-module.exports = function errorResponse(msg,error){
+module.exports = function errorResponse(msg,status){
     const message = {
         msg : msg,
-        status:error.statusCode,
+        status:status,
         organization:'WISSEN',
     }
     return message;
