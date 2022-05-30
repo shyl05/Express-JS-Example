@@ -3,7 +3,7 @@ module.exports = function successResponse(msg,responseCode,data){
         msg:msg,
         status:responseCode,
         organization:'WISSEN',
-        data : data,
+        data : data
     };
     return message
 };

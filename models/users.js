@@ -27,7 +27,42 @@ var userSchema = new Schema({
         min:0,
         max:99,
         default: 1
-    }
+    },
+    realPerson:{
+        type:Boolean,
+        required:true,
+        default:false
+    },
+    comments:[{
+        type:Schema.Types.ObjectId,
+        ref:'Comments'
+    }]
 });
+
+
+// // Schema Methods on each object;
+// userSchema.methods.toggelRealPerson = () =>{
+//     this.realPerson = !this.realPerson;
+//     return this.save();
+// }
+
+// const User = mongoose.model('Users',userSchema);
+
+// const findUser = async()=>{
+//     const found = await User.findOne({userName:'YoungMoney'});
+//     console.log(found);
+//     await found.toggelRealPerson();
+//     console.log(found);
+// }
+
+// findUser();
+
+
+
+// Schema Virtuals:
+userSchema.virtual('fullName').get(function(){
+    return `${this.firstName} ${this.lastName}`;
+})
+
 
 module.exports = mongoose.model('Users', userSchema);
