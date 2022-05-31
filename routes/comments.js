@@ -15,7 +15,7 @@ router.get('/:id',(req,res)=>{
             var errorRes = errorResponse('Bad Request',status) 
             return res.send(errorRes);
         }
-        else if(comments.length===0){
+        else if(comments===null){
             let status = res.statusCode=404;
             var errorRes = errorResponse('Sorry Not Found',status); 
             return res.send(errorRes);
@@ -35,7 +35,7 @@ router.get('/user/:id',(req,res)=>{
             var errorRes = errorResponse('Bad Request',status) 
             return res.send(errorRes);
         }
-        else if(comments.length===0){
+        else if(comments===null){
             let status = res.statusCode=404;
             var errorRes = errorResponse('Sorry Not Found',status); 
             return res.send(errorRes);

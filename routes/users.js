@@ -16,7 +16,7 @@ router.get('/',(req, res, next)=>{
       var errorRes = errorResponse('Bad Request',status) 
       return res.send(errorRes);
     } 
-    else if(users.length===0){
+    else if(users===null){
       let status = res.statusCode=404;
       var errorRes = errorResponse('Sorry Empty Users',status) 
       return res.send(errorRes);
@@ -58,29 +58,29 @@ router.post('/add',(req, res, next)=>{
 /* Get Single User By id - Comments will fetch from Comments collection*/
 
 router.get('/user/:id',(req,res)=>{
-  Users.findById(req.params.id)
-  .exec(
-    function(error,user){
-      Comments.find({user:req.params.id},function(err,comments){
-        if(err){
-          console.log(err);
-        }
-        if(error){
-          let status = res.statusCode=400;
-          var errorRes = errorResponse('Bad Request',status) 
-          return res.send(errorRes);
-        } 
-        else if(user.length===0){
-          let status = res.statusCode=404;
-          var errorRes = errorResponse('Sorry User Not Found',status) 
-          return res.send(errorRes);
-        } 
-        user.comments = user.comments.concat(comments);
-        let responseCode = res.statusCode=200;
-        var response = successResponse('Success',responseCode,user);
-        return res.send(response);
-        })
+  Users.findById(req.params.id,function(error,user){
+    if(error){
+      let status = res.statusCode=400;
+      var errorRes = errorResponse('Bad Request',status) 
+      return res.send(errorRes);
+    } 
+    else if(user===null){
+      let status = res.statusCode=404;
+      var errorRes = errorResponse('Sorry User Not Found',status) 
+      return res.send(errorRes);
+    } 
+    Comments.find({user:req.params.id},function(err,comments){
+      if(err){
+        let status = res.statusCode=400;
+        var errorRes = errorResponse('Bad Request',status) 
+        return res.send(errorRes);
+      }
+      user.comments = user.comments.concat(comments);
+      let responseCode = res.statusCode=200;
+      var response = successResponse('Success',responseCode,user);
+      return res.send(response);
       })
+    })
       
     }
   );  
@@ -94,7 +94,7 @@ router.get('/username/:username',(req,res,err)=>{
       var errorRes = errorResponse('Bad Request',status) 
       return res.send(errorRes);
     }
-    else if(user.length===0){
+    else if(user===null){
       let status = res.statusCode=404;
       var errorRes = errorResponse('Sorry User Not Found',status); 
       return res.send(errorRes);
