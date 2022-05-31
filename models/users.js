@@ -33,10 +33,12 @@ var userSchema = new Schema({
         required:true,
         default:false
     },
-    comments:[{
-        type:Schema.Types.ObjectId,
-        ref:'Comments'
-    }]
+    comments:[
+        {
+            type:Schema.Types.ObjectId,
+            ref:"Comments"
+        }
+    ]
 });
 
 
@@ -46,7 +48,10 @@ var userSchema = new Schema({
 //     return this.save();
 // }
 
-// const User = mongoose.model('Users',userSchema);
+const User = mongoose.model('Users',userSchema);
+// User.find().populate("comments")
+// .then(p=>console.log(p))
+// .catch(error=>console.log(error));
 
 // const findUser = async()=>{
 //     const found = await User.findOne({userName:'YoungMoney'});
@@ -57,12 +62,10 @@ var userSchema = new Schema({
 
 // findUser();
 
-
-
 // Schema Virtuals:
 userSchema.virtual('fullName').get(function(){
     return `${this.firstName} ${this.lastName}`;
 })
 
 
-module.exports = mongoose.model('Users', userSchema);
+module.exports = User;

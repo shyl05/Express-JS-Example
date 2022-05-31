@@ -6,11 +6,21 @@ var commentSchema = new Schema({
         type:String,
         required:true
     },
-    user_id:{
+    user:{
         type:Schema.Types.ObjectId,
-        ref:'Users',
-        required:true
+        ref:'Users'
     }
 }) 
 
-module.exports = mongoose.model('Comments', commentSchema);
+// Auto populate Plugin
+
+//commentSchema.plugin(require('mongoose-autopopulate'));
+
+const Comments = mongoose.model('Comments', commentSchema);
+// Comments.find().populate("user")
+// .then(p=>console.log(p))
+// .catch(error=>console.log(error));
+
+
+module.exports = Comments;
+

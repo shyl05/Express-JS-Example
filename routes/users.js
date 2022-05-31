@@ -1,6 +1,7 @@
 const express = require('express');
 var router = express.Router();
 var Users = require('../models/users');
+var Comments = require('../models/comments');
 const bcrypt =require('bcryptjs');
 
 // Adding Handlers - Middlewares
@@ -54,27 +55,37 @@ router.post('/add',(req, res, next)=>{
   }
 });
 
-/* Get Single User By id*/
+/* Get Single User By id - Comments will fetch from Comments collection*/
 
 router.get('/user/:id',(req,res)=>{
-  Users.findById(req.params.id,function(error,user){
-    if(error){
-      let status = res.statusCode=400;
-      var errorRes = errorResponse('Bad Request',status) 
-      return res.send(errorRes);
-    } 
-    else if(user.length===0){
-      let status = res.statusCode=404;
-      var errorRes = errorResponse('Sorry User Not Found',status) 
-      return res.send(errorRes);
+  Users.findById(req.params.id)
+  .exec(
+    function(error,user){
+      Comments.find({user:req.params.id},function(err,comments){
+        if(err){
+          console.log(err);
+        }
+        if(error){
+          let status = res.statusCode=400;
+          var errorRes = errorResponse('Bad Request',status) 
+          return res.send(errorRes);
+        } 
+        else if(user.length===0){
+          let status = res.statusCode=404;
+          var errorRes = errorResponse('Sorry User Not Found',status) 
+          return res.send(errorRes);
+        } 
+        user.comments = user.comments.concat(comments);
+        let responseCode = res.statusCode=200;
+        var response = successResponse('Success',responseCode,user);
+        return res.send(response);
+        })
+      })
+      
     }
-    let responseCode = res.statusCode=200;
-    var response = successResponse('Success',responseCode,user);
-    res.send(response);
-  })
-})
+  );  
 
-/* Get Single User By username*/
+/* Get Single User By username - Comments will not fetch*/
 
 router.get('/username/:username',(req,res,err)=>{
   Users.find({userName:req.params.username},function(error,user){
