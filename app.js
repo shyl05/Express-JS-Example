@@ -58,7 +58,7 @@ app.use(function(err, req, res, next) {
 module.exports = app;
 
 // PORT
-const port=process.env.PORT || 7000
+const port = process.env.PORT || 7000
 
 // using database from config
 const dbConfig=require('./config/database');

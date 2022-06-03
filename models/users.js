@@ -12,7 +12,6 @@ var userSchema = new Schema({
     userName:{
         type:String,
         required:true,
-        minlength: 8,
         maxlength: 18,
         unique:true
     },

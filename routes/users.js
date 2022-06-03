@@ -88,7 +88,7 @@ router.get('/user/:id',(req,res)=>{
 /* Get Single User By username - Comments will not fetch*/
 
 router.get('/username/:username',(req,res,err)=>{
-  Users.find({userName:req.params.username},function(error,user){
+  Users.findOne({userName:req.params.username},function(error,user){
     if(error){
       let status = res.statusCode=400;
       var errorRes = errorResponse('Bad Request',status) 
@@ -99,9 +99,18 @@ router.get('/username/:username',(req,res,err)=>{
       var errorRes = errorResponse('Sorry User Not Found',status); 
       return res.send(errorRes);
     }
-    let responseCode = res.statusCode=200;
-    var response = successResponse('Success',responseCode,user);
-    res.send(response);
+    Comments.find({user:user._id},function(err,comments){
+      if(err){
+        let status = res.statusCode=400;
+        var errorRes = errorResponse('Bad Request',status) 
+        return res.send(errorRes);
+      }
+      user.comments = user.comments.concat(comments);
+      let responseCode = res.statusCode=200;
+      var response = successResponse('Success',responseCode,user);
+      res.send(response);
+    })
+    
   })
 })
 
