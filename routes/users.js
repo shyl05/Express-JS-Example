@@ -9,16 +9,17 @@ const successResponse = require('../middlewares/Handler');
 const errorResponse = require('../middlewares/ErrorHandler');
 
 /* GET All Users */
-router.get('/',(req, res, next)=>{
+router.get('/',(_req, res,)=>{
   Users.find(function(error, users){
+    var errorRes;
     if(error){
       let status = res.statusCode=400;
-      var errorRes = errorResponse('Bad Request',status) 
+      errorRes = errorResponse('Bad Request',status) 
       return res.send(errorRes);
     } 
     else if(users===null){
       let status = res.statusCode=404;
-      var errorRes = errorResponse('Sorry Empty Users',status) 
+      errorRes = errorResponse('Sorry Empty Users',status) 
       return res.send(errorRes);
     }
     let responseCode = res.statusCode=200;
@@ -29,11 +30,11 @@ router.get('/',(req, res, next)=>{
 
 
 /* Add New User */
-router.post('/add',(req, res, next)=>{
+router.post('/add',(req, res)=>{
   try {
     const body = req.body;
     const user = new Users(body);
-    bcrypt.genSalt(10, async(err, salt)=>{
+    bcrypt.genSalt(10, async(salt)=>{
       await bcrypt.hash(user.password, salt).then((encrypt)=>{
         user.password = encrypt;
         user.save()
@@ -41,10 +42,11 @@ router.post('/add',(req, res, next)=>{
         let responseCode = res.statusCode=200
         var response = successResponse('User added successfully',responseCode);
         res.send(response);
-      }).catch((err)=>{
+      }).catch((error)=>{
         let status = res.statusCode=400;
-        var errorRes = errorResponse('OOPS! User registration failed',status);
-        return res.send(errorRes);
+        console.log(error);
+        var errorResp = errorResponse('OOPS! User registration failed',status);
+        return res.send(errorResp);
       })
     }); 
   }
@@ -59,20 +61,21 @@ router.post('/add',(req, res, next)=>{
 
 router.get('/user/:id',(req,res)=>{
   Users.findById(req.params.id,function(error,user){
+    var errorRes;
     if(error){
       let status = res.statusCode=400;
-      var errorRes = errorResponse('Bad Request',status) 
+      errorRes = errorResponse('Bad Request',status) 
       return res.send(errorRes);
     } 
     else if(user===null){
       let status = res.statusCode=404;
-      var errorRes = errorResponse('Sorry User Not Found',status) 
+      errorRes = errorResponse('Sorry User Not Found',status) 
       return res.send(errorRes);
     } 
     Comments.find({user:req.params.id},function(err,comments){
       if(err){
         let status = res.statusCode=400;
-        var errorRes = errorResponse('Bad Request',status) 
+        errorRes = errorResponse('Bad Request',status) 
         return res.send(errorRes);
       }
       user.comments = user.comments.concat(comments);
@@ -87,22 +90,23 @@ router.get('/user/:id',(req,res)=>{
 
 /* Get Single User By username - Comments will not fetch*/
 
-router.get('/username/:username',(req,res,err)=>{
+router.get('/username/:username',(req,res)=>{
   Users.findOne({userName:req.params.username},function(error,user){
+    var errorRes;
     if(error){
       let status = res.statusCode=400;
-      var errorRes = errorResponse('Bad Request',status) 
+      errorRes = errorResponse('Bad Request',status) 
       return res.send(errorRes);
     }
     else if(user===null){
       let status = res.statusCode=404;
-      var errorRes = errorResponse('Sorry User Not Found',status); 
+      errorRes = errorResponse('Sorry User Not Found',status); 
       return res.send(errorRes);
     }
     Comments.find({user:user._id},function(err,comments){
       if(err){
         let status = res.statusCode=400;
-        var errorRes = errorResponse('Bad Request',status) 
+        errorRes = errorResponse('Bad Request',status) 
         return res.send(errorRes);
       }
       user.comments = user.comments.concat(comments);

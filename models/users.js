@@ -41,25 +41,23 @@ var userSchema = new Schema({
 });
 
 
-// // Schema Methods on each object;
-// userSchema.methods.toggelRealPerson = () =>{
-//     this.realPerson = !this.realPerson;
-//     return this.save();
-// }
+// Schema Methods on each object;
+userSchema.methods.toggelRealPerson = () =>{
+    this.realPerson = !this.realPerson;
+    return this.save();
+}
 
 const User = mongoose.model('Users',userSchema);
-// User.find().populate("comments")
-// .then(p=>console.log(p))
-// .catch(error=>console.log(error));
 
-// const findUser = async()=>{
-//     const found = await User.findOne({userName:'YoungMoney'});
-//     console.log(found);
-//     await found.toggelRealPerson();
-//     console.log(found);
-// }
 
-// findUser();
+const findUser = async()=>{
+    const found = await User.findOne({userName:'YoungMoney'});
+    console.log(found);
+    await found.toggelRealPerson();
+    console.log(found);
+}
+
+
 
 // Schema Virtuals:
 userSchema.virtual('fullName').get(function(){

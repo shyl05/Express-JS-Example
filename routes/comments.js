@@ -10,14 +10,15 @@ const errorResponse = require('../middlewares/ErrorHandler');
 
 router.get('/:id',(req,res)=>{
     Comments.findById(req.params.id).populate('user','userName').exec(function(err,comments){
+        var errorRes;
         if(err){
             let status = res.statusCode=400;
-            var errorRes = errorResponse('Bad Request',status) 
+            errorRes = errorResponse('Bad Request',status) 
             return res.send(errorRes);
         }
         else if(comments===null){
             let status = res.statusCode=404;
-            var errorRes = errorResponse('Sorry Not Found',status); 
+            errorRes = errorResponse('Sorry Not Found',status); 
             return res.send(errorRes);
         }
         let responseCode = res.statusCode=200;
@@ -36,8 +37,8 @@ router.post('/:id',async(req,res)=>{
         await comment.populate('user','userName',function(err,result){
             if(err){
                 let status = res.statusCode=400;
-                var errorRes = errorResponse('Bad Request',status) 
-                return res.send(errorRes);
+                var errorResp = errorResponse('Bad Request',status) 
+                return res.send(errorResp);
             }
             result.save();
             let responseCode = res.statusCode=200;
@@ -55,9 +56,9 @@ router.post('/:id',async(req,res)=>{
 
 /* Update Comment */
 
-router.put('/:id',async(req,res)=>{
+router.put('/:id',(req,res)=>{
     const updateComment = req.body;
-    await Comments.findByIdAndUpdate(req.params.id,updateComment,function(err,comment){
+    Comments.findByIdAndUpdate(req.params.id,updateComment,{new:true},function(err,comment){
         if(err){
             let status = res.statusCode=400;
             var errorRes = errorResponse('Bad Request',status) 
@@ -91,14 +92,15 @@ router.delete('/:id',(req,res)=>{
 
 router.get('/user/:id',(req,res)=>{
     Comments.find({ user : req.params.id }).populate('user','userName').exec(function(err,comments){
+        var errorRes;
         if(err){
             let status = res.statusCode=400;
-            var errorRes = errorResponse('Bad Request',status) 
+            errorRes = errorResponse('Bad Request',status) 
             return res.send(errorRes);
         }
         else if(comments===null){
             let status = res.statusCode=404;
-            var errorRes = errorResponse('Sorry Not Found',status); 
+            errorRes = errorResponse('Sorry Not Found',status); 
             return res.send(errorRes);
         }
         let responseCode = res.statusCode=200;
